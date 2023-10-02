@@ -1,5 +1,6 @@
 # Uncomment this to pass the first stage
 import socket
+import re
 
 
 def main():
@@ -54,11 +55,16 @@ def main():
     #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
     # GET /echo/<a-random-string>
-    random_string = path.split("/")[-1]
-    content_length = len(random_string)
-    response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
-    conn.sendall(response)
 
+    if path == '/':
+        conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
+    elif re.match('/echo/*', path):
+        random_string = path.replace('/echo/','')
+        content_length = len(random_string)
+        response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+        conn.sendall(response)
+    else:
+        conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
 
 if __name__ == "__main__":
