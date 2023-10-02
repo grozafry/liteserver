@@ -56,13 +56,28 @@ def main():
 
     # GET /echo/<a-random-string>
 
-    if path == '/':
-        conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
-    elif re.match('/echo/*', path):
-        random_string = path.replace('/echo/','')
-        content_length = len(random_string)
-        response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+    # if path == '/':
+    #     conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
+    # elif re.match('/echo/*', path):
+    #     random_string = path.replace('/echo/','')
+    #     content_length = len(random_string)
+    #     response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+    #     conn.sendall(response)
+    # else:
+    #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
+
+    if path == '/user-agent':
+        lines = data.decode("utf-8").split('\r\n')
+        user_agent = list(filter(lambda x: True if x.split(":")[0] == 'User-Agent' else False, lines))[0].split(":")[-1]
+        print(f"User-Agent is {user_agent}")
+        response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {user_agent.__len__()}\r\n\r\n{user_agent}'.encode(encoding='utf-8')
         conn.sendall(response)
+
+    # elif re.match('/echo/*', path):
+    #     random_string = path.replace('/echo/','')
+    #     content_length = len(random_string)
+    #     response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+    #     conn.sendall(response)
     else:
         conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
