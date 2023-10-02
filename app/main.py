@@ -149,7 +149,7 @@ def conn_listener(conn, addr):
     else:
         conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
     print(f"Closing connection for client_socket {conn} from PORT {addr[1]}")
-
+    conn.close()
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
