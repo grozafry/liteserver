@@ -48,10 +48,17 @@ def main():
 
 
     path = data.decode("utf-8").split('\r\n')[0].split(" ")[1]
-    if path == '/':
-        conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
-    else:
-        conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
+    # if path == '/':
+    #     conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
+    # else:
+    #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
+
+    # GET /echo/<a-random-string>
+    random_string = path.split("/")[-1]
+    content_length = len(random_string)
+    response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+    conn.sendall(response)
+
 
 
 if __name__ == "__main__":
