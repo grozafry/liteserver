@@ -65,11 +65,11 @@ def main():
         response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {user_agent.__len__()}\r\n\r\n{user_agent}'.encode(encoding='utf-8')
         conn.sendall(response)
 
-    # elif re.match('/echo/*', path):
-    #     random_string = path.replace('/echo/','')
-    #     content_length = len(random_string)
-    #     response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
-    #     conn.sendall(response)
+    elif re.match('/echo/*', path):
+        random_string = path.replace('/echo/','')
+        content_length = len(random_string)
+        response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
+        conn.sendall(response)
     # else:
     #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
