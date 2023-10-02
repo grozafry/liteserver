@@ -35,7 +35,7 @@ def main():
 
     print(f"Connection data received from the client connection socket in first batch of  max 1024 bytes is {data}")
 
-    conn.sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+    # conn.sendall(b"HTTP/1.1 200 OK\r\n\r\n")
     # sendall() is a method provided by socket objects in Python. 
     # It is used to send data from the server to the connected client. 
     # Unlike send(), which may not send all the data at once, sendall() 
@@ -45,6 +45,14 @@ def main():
     #Note - Here we are only sending 'HTTP Status Line' in our connection response. 
     #We can also add a 'response body' like this - conn.sendall(b"HTTP/1.1 200 OK\r\n\r\nThis is response body")
     #\r\n\r\n is a separator between 'HTTP Status Line' and 'response body'
+
+
+    path = data.decode("utf-8").split('\r\n')[0].split(" ")[1]
+    if path == '/':
+        conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
+    else:
+        conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
+
 
 if __name__ == "__main__":
     main()
