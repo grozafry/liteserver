@@ -92,6 +92,8 @@
 import socket
 import re
 import threading
+import sys
+import os
 
 def conn_listener(conn, addr):
     print(f"conn_listener now active for client_socket on IP {addr[0]} and PORT {addr[1]}")
@@ -137,6 +139,19 @@ def conn_listener(conn, addr):
         content_length = len(random_string)
         response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
         conn.sendall(response)
+
+    elif path.split("/")[1] == "files":
+        fileName = path[6:]
+        print("File Name = ", fileName)
+        directory = sys.argv[-1]
+        if os.path.exists(directory + fileName):
+            file = open(directory + fileName, "rb")
+            body = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {os.path.getsize(directory + fileName)}\r\n\r\n"
+            conn.send(body.encode())
+            conn.send(file.read())
+            file.close()
+        else:
+             conn.send(b"HTTP/1.1 404 Not Found \r\n\r\n")
     # else:
     #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
@@ -149,7 +164,7 @@ def conn_listener(conn, addr):
     else:
         conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
     print(f"Closing connection for client_socket {conn} from PORT {addr[1]}")
-    conn.close()
+    conn.close()  #This is impportant. Close connections once data has been received. So we can make more connections.
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
