@@ -118,6 +118,8 @@ def conn_listener(conn, addr):
 
 
     path = data.decode("utf-8").split('\r\n')[0].split(" ")[1]
+    head = data.decode("utf-8").split("\r\n")[0].split(" ")
+    req_type = head[0]
     # if path == '/':
     #     conn.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
     # else:
@@ -140,7 +142,7 @@ def conn_listener(conn, addr):
         response = bytes(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{random_string}', encoding='UTF-8')
         conn.sendall(response)
 
-    elif path.split("/")[1] == "files":
+    elif path.split("/")[1] == "files" and req_type == "GET":
         fileName = path[6:]
         print("File Name = ", fileName)
         directory = sys.argv[-1]
@@ -152,6 +154,18 @@ def conn_listener(conn, addr):
             file.close()
         else:
              conn.send(b"HTTP/1.1 404 Not Found \r\n\r\n")
+    elif path.split("/")[1] == "files" and req_type == "POST":
+        file_body = data.decode("utf-8").split('\r\n')[-1]
+        filename = path[6:]
+        directory = sys.argv[-1]
+        location = directory + filename
+        print("Writing to location ", location)
+        with open(location, "w") as f:
+            # print("Writing Data " , data_list[-1])
+            f.write(file_body)
+            f.close()
+        conn.send(b"HTTP/1.1 201 OK \r\n\r\n")
+
     # else:
     #     conn.sendall(b'HTTP/1.1 404 NOT FOUND\r\n\r\n')
 
